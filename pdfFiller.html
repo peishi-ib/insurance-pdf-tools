@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>PDF 填寫助理 Flagship | 產險自動化系統</title>
+    <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+    <style>
+        :root { --primary: #2563eb; --bg: #f4f6f9; }
+        body { font-family: "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding: 0; }
+        
+        .toolbar { position: fixed; top: 0; left: 0; right: 0; background: #1e293b; color: white; padding: 10px 20px; z-index: 1000; display: flex; gap: 10px; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.3); flex-wrap: wrap; }
+        
+        .filename-helper { background: #334155; padding: 8px 15px; display: flex; gap: 10px; align-items: center; border-radius: 8px; font-size: 12px; }
+        .filename-helper input { padding: 4px; border-radius: 4px; border: none; width: 80px; }
+        
+        .mode-selector { display: flex; background: #0f172a; border-radius: 6px; padding: 3px; }
+        .mode-btn { padding: 5px 10px; border: none; border-radius: 4px; background: transparent; color: #94a3b8; cursor: pointer; font-size: 12px; }
+        .mode-btn.active { background: var(--primary); color: white; }
+
+        #data-importer { position: fixed; top: 110px; left: 0; right: 0; background: #0f172a; padding: 10px 20px; border-top: 1px solid #1e293b; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; z-index: 999; }
+        #paste-row { flex: 1; padding: 8px; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 4px; font-size: 12px; }
+
+        .main-content { margin-top: 180px; display: flex; flex-direction: column; align-items: center; padding-bottom: 200px; }
+        .page-container { position: relative; margin-bottom: 30px; background: white; box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+        .page-info { position: absolute; top: -25px; left: 0; font-size: 12px; color: #64748b; font-weight: bold; }
+        canvas { display: block; max-width: 100%; cursor: crosshair; }
+        
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; }
+        .btn:hover { opacity: 0.8; transform: translateY(-1px); }
+        .btn-blue { background: #3498db; color: white; }
+        .btn-green { background: #27ae60; color: white; }
+        .btn-orange { background: #e67e22; color: white; }
+        .btn-tag { background: #8e44ad; color: white; }
+
+        .tag-label { position: absolute; background: rgba(142, 68, 173, 0.9); color: white; padding: 2px 5px; border-radius: 3px; font-size: 10px; pointer-events: none; transform: translate(-50%, -100%); margin-top: -15px; white-space: nowrap; }
+
+        .export-panel { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; display: flex; justify-content: center; gap: 15px; border-top: 2px solid #ddd; z-index: 1001; }
+        
+        #tag-modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 50px rgba(0,0,0,0.3); z-index: 2000; max-height: 80vh; overflow-y: auto; width: 400px; }
+        .tag-option { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; font-size: 13px; color: #333; }
+        .tag-option:hover { background: #f0f7ff; }
+
+        .status-bar { position: fixed; bottom: 80px; right: 20px; background: rgba(0,0,0,0.8); color: white; padding: 10px 20px; border-radius: 30px; font-size: 13px; z-index: 1002; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="toolbar">
+    <select id="company-select" style="padding:6px;">
+        <option value="mingtai">明台產物</option>
+        <option value="shinkong">新光產物</option>
+        <option value="fubon_travel">富邦快樂旅平卡 (智慧全自動)</option>
+    </select>
+    <input type="file" id="pdf-upload" accept="application/pdf">
+
+    <div class="filename-helper">
+        <input type="text" id="fn-period" placeholder="期間">
+        <input type="text" id="fn-name" placeholder="姓名">
+        <input type="text" id="fn-type" placeholder="險種">
+        <span id="final-filename" style="color:#60a5fa;"></span>
+    </div>
+
+    <div class="mode-selector">
+        <button class="mode-btn active" id="btn-check" onclick="setMode('check', this)">✅ 勾選</button>
+        <button class="mode-btn" onclick="setMode('date_split', this)">📅 日期(分)</button>
+        <button class="mode-btn" onclick="setMode('date_full', this)">📅 日期(點)</button>
+        <button class="mode-btn btn-tag" id="btn-tag" onclick="setMode('tag', this)">🏷️ 設定標籤</button>
+    </div>
+
+    <div class="filename-helper" style="background:#0f172a;">
+        <button class="btn" style="background:#475569; font-size:11px; padding:4px 8px;" onclick="setQuickStamp('BP000280')">🆔 業務</button>
+        <button class="btn" style="background:#475569; font-size:11px; padding:4px 8px;" onclick="setQuickStamp('E223105238')">🪪 身分證</button>
+        <input type="text" id="custom-text" placeholder="自定義文字..." style="width:100px; padding:4px; border-radius:4px; font-size:12px;" oninput="setMode('text')">
+    </div>
+    
+    <button id="save-pos" class="btn btn-blue">💾 記住位置</button>
+    <button onclick="exportConfig()" class="btn" style="background:#8b5cf6; color:white;">📤 匯出備份</button>
+    <button onclick="importConfig()" class="btn" style="background:#d946ef; color:white;">📥 匯入備份</button>
+    <button id="btn-set-dir" onclick="setWorkDir()" class="btn" style="background:#0ea5e9; color:white;">📂 設定存檔目錄</button>
+    <input type="file" id="config-import" style="display:none;" accept=".json">
+    <div id="qr-display" style="font-size:11px; color:#94a3b8;">QR: 待偵測</div>
+</div>
+
+<div id="data-importer">
+    <input type="text" id="paste-row" placeholder="貼上試算表整列資料（要保人+被保2-10）...">
+    <button class="btn btn-blue" onclick="parseAndSmartFill()">🚀 解析並全自動填寫</button>
+    <div id="parsed-summary" style="color:#94a3b8; font-size:11px;"></div>
+</div>
+
+<div class="main-content" id="viewer"></div>
+<div id="statusBar" class="status-bar"></div>
+
+<div id="tag-modal">
+    <h3 style="margin-top:0;">選擇標籤綁定</h3>
+    <div id="tag-list"></div>
+    <button onclick="closeTagModal()" style="margin-top:15px; width:100%; padding:10px; border-radius:8px;">取消</button>
+</div>
+
+<div class="export-panel" id="export-panel" style="display:none;">
+    <div style="display:flex; gap:10px; align-items:center;">
+        <span>PDF 範圍:</span>
+        <input type="text" id="pdf-range" value="1-4" style="width:40px; text-align:center;">
+        <button id="btn-pdf-range" class="btn btn-green">📄 產出 PDF</button>
+    </div>
+    <div style="width:1px; background:#ddd; height:30px; margin: 0 10px;"></div>
+    <div style="display:flex; gap:10px; align-items:center;">
+        <span>JPG 頁碼:</span>
+        <input type="text" id="jpg-page" value="1" style="width:30px; text-align:center;">
+        <button id="btn-jpg-page" class="btn btn-orange">🖼️ 產出純淨 JPG</button>
+    </div>
+</div>
+
+<script>
+    const { PDFDocument } = PDFLib;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+    let pdfBytes = null, pageCanvases = [], marks = [], currentMode = 'check', currentCompany = 'mingtai';
+    let lastClickedMark = null, dataPool = {}, originalFileName = "", totalPages = 0;
+    let directoryHandle = null;
+
+    // --- 選擇存檔資料夾 ---
+    async function setWorkDir() {
+        try {
+            directoryHandle = await window.showDirectoryPicker();
+            showStatus("📁 存檔目錄已設定");
+            document.getElementById('btn-set-dir').innerText = "📂 " + directoryHandle.name;
+        } catch (err) { console.warn("未選擇資料夾"); }
+    }
+
+    const TAGS = [];
+    const addTag = (id, label) => TAGS.push({ id, label });
+    addTag('p_name', '要保人:姓名'); addTag('p_id', '要保人:身分證'); addTag('p_m', '要保人:男(V)'); addTag('p_f', '要保人:女(V)');
+    addTag('p_by', '要保人生日:年'); addTag('p_bm', '要保人生日:月'); addTag('p_bd', '要保人生日:日'); addTag('p_bf', '要保人生日:點號');
+    addTag('p_addr', '地址'); addTag('p_mail', 'Email'); addTag('p_tel', '手機');
+    addTag('qr_link', '🌟 QR 連結內容'); 
+
+    for(let i=2; i<=10; i++) {
+        addTag(`b${i}_name`, `被保${i}:姓名`); addTag(`b${i}_id`, `被保${i}:身分證`);
+        addTag(`b${i}_m`, `被保${i}:男(V)`); addTag(`b${i}_f`, `被保${i}:女(V)`);
+        addTag(`b${i}_by`, `被保${i}生日:年`); addTag(`b${i}_bm`, `被保${i}生日:月`);
+        addTag(`b${i}_bd`, `被保${i}生日:日`); addTag(`b${i}_bf`, `被保${i}生日:點號`);
+        addTag(`b${i}_rel`, `被保${i}:關係`); addTag(`b${i}_leg`, `被保${i}:法代`);
+    }
+
+    const tagListDiv = document.getElementById('tag-list');
+    TAGS.forEach(tag => {
+        const div = document.createElement('div'); div.className = 'tag-option';
+        div.innerText = tag.label; div.onclick = () => bindTag(tag.id, tag.label);
+        tagListDiv.appendChild(div);
+    });
+
+    // --- 備份功能 ---
+    function exportConfig() {
+        const data = JSON.stringify(marks, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `標籤位置_${currentCompany}_${Date.now()}.json`;
+        a.click();
+        showStatus("設定檔已下載備份");
+    }
+
+    function importConfig() {
+        document.getElementById('config-import').click();
+    }
+
+    document.getElementById('config-import').onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                marks = JSON.parse(e.target.result);
+                drawAllMarks();
+                alert("位置匯入成功！");
+            } catch (err) { alert("讀取失敗"); }
+        };
+        reader.readAsText(file);
+    };
+
+    const now = new Date();
+    const rocYear = (now.getFullYear() - 1911).toString();
+    const month = (now.getMonth() + 1).toString().padStart(2, '0');
+    const day = now.getDate().toString().padStart(2, '0');
+    const dateSplit = { y: rocYear, m: month, d: day };
+    const dateFull = `${rocYear}.${month}.${day}`;
+    const todayStr = now.getFullYear().toString() + month + day;
+
+    function setMode(mode, btn) {
+        currentMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        showStatus(`已切換模式：${mode}`);
+    }
+
+    function setQuickStamp(text) {
+        document.getElementById('custom-text').value = text;
+        setMode('text');
+    }
+
+    function showStatus(text) {
+        const bar = document.getElementById('statusBar');
+        bar.innerText = text; bar.style.display = 'block';
+        setTimeout(() => bar.style.display = 'none', 2000);
+    }
+
+    // --- 檔名助手邏輯 ---
+    const fnInputs = ['fn-period', 'fn-name', 'fn-type'];
+    fnInputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.oninput = updateFinalFilename;
+    });
+
+    function updateFinalFilename() {
+        const p = document.getElementById('fn-period').value;
+        const n = document.getElementById('fn-name').value;
+        const t = document.getElementById('fn-type').value;
+        const final = `${p}${n}${t}`.trim();
+        document.getElementById('final-filename').innerText = final ? `預計：${final}_成品.pdf` : "";
+        return final || originalFileName || "未命名文件";
+    }
+
+    function parseAndSmartFill() {
+        const raw = document.getElementById('paste-row').value;
+        const row = raw.split('\t');
+        if (row.length < 2) return alert("請貼上正確的試算表資料");
+        dataPool = {};
+        const processPerson = (prefix, name, id, bdayStr, rel="", leg="") => {
+            if(!name) return;
+            dataPool[`${prefix}_name`] = name; dataPool[`${prefix}_id`] = id;
+            if(id.length >= 2) {
+                dataPool[`${prefix}_m`] = (id.charAt(1) === '1') ? 'V' : '';
+                dataPool[`${prefix}_f`] = (id.charAt(1) === '2') ? 'V' : '';
+            }
+            const d = new Date(bdayStr);
+            if(!isNaN(d.getTime())) {
+                const y = d.getFullYear() - 1911, m = (d.getMonth()+1).toString().padStart(2,'0'), day = d.getDate().toString().padStart(2,'0');
+                dataPool[`${prefix}_by`] = y; dataPool[`${prefix}_bm`] = m; dataPool[`${prefix}_bd`] = day;
+                dataPool[`${prefix}_bf`] = `${y}.${m}.${day}`;
+            }
+            if(rel) dataPool[`${prefix}_rel`] = rel;
+            if(leg) dataPool[`${prefix}_leg`] = leg;
+        };
+        processPerson('p', row[0], row[1], row[2]);
+        dataPool['p_addr'] = row[3] || ''; dataPool['p_mail'] = row[4] || ''; dataPool['p_tel'] = row[5] || '';
+        for(let i=2; i<=10; i++) {
+            const base = 6 + (i-2) * 5;
+            if(row[base]) processPerson(`b${i}`, row[base], row[base+1], row[base+2], row[base+3], row[base+4]);
+        }
+        marks.forEach(m => { if(m.tag && dataPool[m.tag] !== undefined) m.value = dataPool[m.tag]; });
+        drawAllMarks();
+        document.getElementById('parsed-summary').innerText = `✅ 解析完成！`;
+    }
+
+    const viewer = document.getElementById('viewer');
+    document.getElementById('pdf-upload').onchange = async (e) => {
+        const file = e.target.files[0]; if(!file) return;
+        originalFileName = file.name.replace('.pdf', '');
+        pdfBytes = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: pdfBytes.slice(0) }).promise;
+        totalPages = pdf.numPages;
+        viewer.innerHTML = ""; pageCanvases = [];
+        for (let i = 1; i <= totalPages; i++) { await renderPage(pdf, i); }
+        
+        // 延遲偵測，確保畫布已經完全渲染
+        setTimeout(() => {
+            if (pageCanvases.length > 0) detectQR(pageCanvases[0]);
+        }, 500);
+
+        document.getElementById('export-panel').style.display = 'flex';
+        loadConfig(); 
+        setTimeout(() => drawAllMarks(), 100); 
+    };
+
+    async function renderPage(pdf, pageNum) {
+        const page = await pdf.getPage(pageNum);
+        const viewport = page.getViewport({ scale: 2.0 });
+        const container = document.createElement('div'); container.className = 'page-container';
+        
+        // 加入頁碼標示
+        const info = document.createElement('div');
+        info.className = 'page-info';
+        info.innerText = `📄 第 ${pageNum} 頁 / 共 ${totalPages} 頁`;
+        container.appendChild(info);
+
+        const canvas = document.createElement('canvas'); canvas.height = viewport.height; canvas.width = viewport.width;
+        container.appendChild(canvas); viewer.appendChild(container);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        await page.render({ canvasContext: ctx, viewport: viewport }).promise;
+        pageCanvases.push({ canvas, ctx, bgData: ctx.getImageData(0,0,canvas.width,canvas.height), width: canvas.width, height: canvas.height });
+
+        // 統一使用雙擊新增/編輯
+        canvas.ondblclick = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) / rect.width, my = (e.clientY - rect.top) / rect.height;
+            const existing = marks.find(m => m.page === pageNum - 1 && Math.abs(m.x - mx) < 0.03 && Math.abs(m.y - my) < 0.03);
+
+            if (currentMode === 'tag') {
+                if (existing) {
+                    lastClickedMark = existing;
+                } else {
+                    const newMark = { id: Date.now(), type: 'text', value: '待設定', page: pageNum - 1, x: mx, y: my, tag: '', isNew: true };
+                    marks.push(newMark);
+                    lastClickedMark = newMark;
+                }
+                openTagModal();
+            } else {
+                if (existing) return;
+                if (currentMode === 'check') marks.push({ id: Date.now(), type: 'check', value: 'V', page: pageNum - 1, x: mx, y: my });
+                else if (currentMode === 'date_full') marks.push({ id: Date.now(), type: 'text', value: dateFull, page: pageNum - 1, x: mx, y: my });
+                else if (currentMode === 'date_split') {
+                    marks.push({ id: Date.now()+1, type: 'text', value: dateSplit.y, page: pageNum - 1, x: mx, y: my });
+                    marks.push({ id: Date.now()+2, type: 'text', value: dateSplit.m, page: pageNum - 1, x: mx+0.05, y: my });
+                    marks.push({ id: Date.now()+3, type: 'text', value: dateSplit.d, page: pageNum - 1, x: mx+0.1, y: my });
+                } else if (currentMode === 'text') {
+                    const val = document.getElementById('custom-text').value;
+                    marks.push({ id: Date.now(), type: 'text', value: val || '', page: pageNum - 1, x: mx, y: my });
+                }
+            }
+            drawAllMarks();
+        };
+
+        canvas.oncontextmenu = (e) => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) / rect.width, my = (e.clientY - rect.top) / rect.height;
+            marks = marks.filter(m => !(m.page === pageNum - 1 && Math.abs(m.x - mx) < 0.03 && Math.abs(m.y - my) < 0.03));
+            drawAllMarks();
+        };
+        setupDragEvents(canvas, pageNum - 1);
+    }
+
+    function openTagModal() { document.getElementById('tag-modal').style.display = 'block'; }
+    function closeTagModal() { 
+        if (lastClickedMark && lastClickedMark.isNew && !lastClickedMark.tag) marks = marks.filter(m => m.id !== lastClickedMark.id);
+        document.getElementById('tag-modal').style.display = 'none'; 
+        drawAllMarks();
+    }
+    function bindTag(tagId, tagLabel) {
+        if(lastClickedMark) {
+            lastClickedMark.tag = tagId; lastClickedMark.tagName = tagLabel; delete lastClickedMark.isNew;
+            if(dataPool[tagId]) lastClickedMark.value = dataPool[tagId];
+            else lastClickedMark.value = tagLabel.split(':')[1] || tagLabel;
+        }
+        document.getElementById('tag-modal').style.display = 'none'; 
+        drawAllMarks();
+    }
+
+    function drawAllMarks() {
+        pageCanvases.forEach((pc, idx) => {
+            pc.ctx.putImageData(pc.bgData, 0, 0);
+            pc.canvas.parentElement.querySelectorAll('.tag-label').forEach(el => el.remove());
+            marks.filter(m => m.page === idx).forEach(m => {
+                const px = m.x * pc.width, py = m.y * pc.height;
+                pc.ctx.beginPath(); pc.ctx.arc(px, py, 12, 0, Math.PI*2);
+                pc.ctx.fillStyle = m.tag ? 'rgba(142, 68, 173, 0.4)' : (m.type === 'check' ? 'rgba(220, 38, 38, 0.4)' : 'rgba(37, 99, 235, 0.4)');
+                pc.ctx.fill(); pc.ctx.fillStyle = "black"; pc.ctx.font = "bold 20px Arial";
+                pc.ctx.textAlign = "center"; pc.ctx.textBaseline = "middle";
+                let displayVal = (m.value || "").toString();
+                if (displayVal.charAt(0) === 'V') displayVal = 'V';
+                else if (displayVal.length > 5) displayVal = displayVal.substring(0, 5);
+                pc.ctx.fillText(displayVal, px, py);
+                if(m.tagName) {
+                    const label = document.createElement('div'); label.className = 'tag-label'; label.innerText = m.tagName;
+                    label.style.left = (m.x * 100) + '%'; label.style.top = (m.y * 100) + '%';
+                    pc.canvas.parentElement.appendChild(label);
+                }
+            });
+        });
+    }
+
+    let isDragging = false, activeMark = null;
+    function setupDragEvents(canvas, pageIdx) {
+        canvas.onmousedown = (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mx = (e.clientX - rect.left) / rect.width, my = (e.clientY - rect.top) / rect.height;
+            activeMark = marks.find(m => m.page === pageIdx && Math.abs(m.x - mx) < 0.03 && Math.abs(m.y - my) < 0.03);
+            if (activeMark) isDragging = true;
+        };
+        window.onmousemove = (e) => {
+            if (isDragging && activeMark) {
+                const rect = pageCanvases[activeMark.page].canvas.getBoundingClientRect();
+                activeMark.x = (e.clientX - rect.left) / rect.width;
+                activeMark.y = (e.clientY - rect.top) / rect.height;
+                drawAllMarks();
+            }
+        };
+        window.onmouseup = () => { isDragging = false; activeMark = null; };
+    }
+
+    function detectQR(pc) {
+        const regions = [
+            { x: 0, y: 0, w: pc.width * 0.4, h: pc.height * 0.3 },           // 左上
+            { x: pc.width * 0.6, y: 0, w: pc.width * 0.4, h: pc.height * 0.3 },     // 右上
+            { x: pc.width * 0.2, y: pc.height * 0.3, w: pc.width * 0.6, h: pc.height * 0.4 }, // 中央
+            { x: 0, y: 0, w: pc.width, h: pc.height } // 全頁
+        ];
+        let code = null;
+        for (let reg of regions) {
+            try {
+                const data = pc.ctx.getImageData(reg.x, reg.y, reg.w, reg.h);
+                code = jsQR(data.data, data.width, data.height);
+                if (code) break;
+            } catch(e) {}
+        }
+        const display = document.getElementById('qr-display');
+        if (code) { 
+            display.innerText = "🔗 QR 已偵測 (點擊複製)";
+            display.style.color = "#34d399";
+            display.style.cursor = "pointer";
+            display.onclick = () => { navigator.clipboard.writeText(code.data); alert("QR 連結已複製！"); };
+            dataPool['qr_link'] = code.data; 
+        } else {
+            display.innerText = "QR: 未偵測到";
+            display.style.color = "#94a3b8";
+        }
+    }
+
+    function loadConfig() {
+        const saved = localStorage.getItem('marks_' + document.getElementById('company-select').value);
+        marks = saved ? JSON.parse(saved) : [];
+    }
+    document.getElementById('save-pos').onclick = () => { localStorage.setItem('marks_' + document.getElementById('company-select').value, JSON.stringify(marks)); alert("位置已記住！"); };
+
+    document.getElementById('btn-pdf-range').onclick = async () => {
+        try {
+            const mainDoc = await PDFDocument.load(pdfBytes.slice(0));
+            const pages = mainDoc.getPages();
+            
+            // 嵌入標準字體以計算寬度 (改用標準體，不使用粗體)
+            const helveticaFont = await mainDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+            
+            marks.forEach(m => {
+                if (m.page < pages.length) {
+                    const p = pages[m.page], { width, height } = p.getSize();
+                    let val = (m.value || "").toString();
+                    if (m.type === 'check' || val.includes('(V)') || val === 'V') val = 'V';
+                    
+                    const fontSize = 14;
+                    const textWidth = helveticaFont.widthOfTextAtSize(val, fontSize);
+                    
+                    // 精確計算置中座標
+                    // PDF 座標系 Y 是從底部往上算，所以要用 (height - 點位)
+                    // 再扣除字體高度的一半（約為字級的 0.35 倍）來達成垂直置中
+                    p.drawText(val, { 
+                        x: (m.x * width) - (textWidth / 2), 
+                        y: (height - (m.y * height)) - (fontSize * 0.35), 
+                        size: fontSize,
+                        font: helveticaFont
+                    });
+                }
+            });
+            
+            const rangeInput = document.getElementById('pdf-range').value || "1-4";
+            const newDoc = await PDFDocument.create();
+            let start, end;
+            if (rangeInput.includes('-')) { const parts = rangeInput.split('-'); start = parseInt(parts[0]) - 1; end = parseInt(parts[1]) - 1; }
+            else { start = end = parseInt(rangeInput) - 1; }
+            const indices = []; for (let i = start; i <= end && i < pages.length; i++) { if (i >= 0) indices.push(i); }
+            
+            const copiedPages = await newDoc.copyPages(mainDoc, indices);
+            copiedPages.forEach(p => newDoc.addPage(p));
+            
+            const b = await newDoc.save();
+            const finalName = updateFinalFilename();
+            const fileName = `${finalName}_p${rangeInput}.pdf`;
+            await saveFile(b, fileName, 'application/pdf');
+        } catch (err) { alert(err.message); }
+    };
+
+    document.getElementById('btn-jpg-page').onclick = async () => {
+        const pageIdx = (parseInt(document.getElementById('jpg-page').value) || 1) - 1;
+        if (pageIdx < 0 || pageIdx >= pageCanvases.length) return alert("頁數無效");
+        const pc = pageCanvases[pageIdx];
+        const tempCanvas = document.createElement('canvas'); tempCanvas.width = pc.width; tempCanvas.height = pc.height;
+        const tctx = tempCanvas.getContext('2d'); tctx.putImageData(pc.bgData, 0, 0);
+        
+        const dataUrl = tempCanvas.toDataURL('image/jpeg', 0.9);
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        
+        const finalName = updateFinalFilename();
+        const fileName = `${finalName}_p${pageIdx+1}.jpg`;
+        await saveFile(await blob.arrayBuffer(), fileName, 'image/jpeg');
+        showStatus(`已導出第 ${pageIdx+1} 頁 JPG`);
+    };
+
+    async function saveFile(buffer, fileName, type) {
+        if (directoryHandle) {
+            try {
+                const fileHandle = await directoryHandle.getFileHandle(fileName, { create: true });
+                const writable = await fileHandle.createWritable();
+                await writable.write(buffer);
+                await writable.close();
+                showStatus("✅ 已存至專案目錄");
+                return;
+            } catch (e) { console.warn("自動儲存失敗，改用下載方式", e); }
+        }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([buffer], { type }));
+        a.download = fileName;
+        a.click();
+    }
+</script>
+</body>
+</html>

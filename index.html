@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保險助手旗艦平台 | 整合導航系統</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary-color: #2563eb;
+            --bg-dark: #0f172a;
+            --bg-light: #f1f5f9;
+        }
+
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Inter', 'Noto Sans TC', sans-serif; overflow: hidden; }
+        
+        .layout { display: flex; height: 100vh; flex-direction: row; }
+
+        /* 側邊欄樣式 */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar-header { padding: 0 20px 20px; border-bottom: 1px solid #1e293b; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-header h2 { font-size: 1.1rem; margin: 0; color: #3b82f6; letter-spacing: 1px; }
+
+        .nav-group { margin-bottom: 25px; }
+        .nav-label { padding: 0 20px 10px; font-size: 0.7rem; text-transform: uppercase; color: #64748b; letter-spacing: 1.5px; font-weight: 700; }
+        
+        .nav-item {
+            padding: 14px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex; align-items: center; gap: 12px;
+            font-size: 0.95rem; color: #cbd5e1; text-decoration: none;
+        }
+
+        .nav-item:hover { background: #1e293b; color: white; }
+        .nav-item.active { background: var(--primary-color); color: white; font-weight: 600; }
+
+        /* 手機版選單按鈕 */
+        .mobile-toggle {
+            display: none;
+            position: fixed; top: 15px; left: 15px;
+            z-index: 1100; background: var(--bg-dark);
+            color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer;
+        }
+
+        /* 右側 iframe 容器 */
+        .content-area { flex-grow: 1; background: var(--bg-light); position: relative; width: 100%; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+
+        /* 響應式設定 */
+        @media (max-width: 768px) {
+            .mobile-toggle { display: block; }
+            .sidebar {
+                position: fixed; height: 100%;
+                transform: translateX(-100%); /* 預設隱藏 */
+            }
+            .sidebar.open { transform: translateX(0); }
+            .layout { flex-direction: column; }
+        }
+
+        .loading-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; display: flex; justify-content: center; align-items: center;
+            z-index: 10; font-weight: 600; color: #64748b; display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰ 選單</button>
+
+    <div class="layout">
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>🛡️ 產險自動化系統</h2>
+                <button style="background:none; border:none; color:white; font-size:1.5rem; display:none;" class="mobile-toggle-close" onclick="toggleSidebar()">×</button>
+            </div>
+            
+            <div class="nav-group">
+                <div class="nav-label">填寫助理</div>
+                <a class="nav-item active" href="pdfFiller.html" target="contentFrame" onclick="setActive(this)">📄 PDF 填寫助手</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">PDF 工具箱</div>
+                <a class="nav-item" href="pdfDecrypt.html" target="contentFrame" onclick="setActive(this)">🔓 批量解密工作站</a>
+                <a class="nav-item" href="pdfMerge.html" target="contentFrame" onclick="setActive(this)">🔗 批量合併系統</a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-label">文案系統</div>
+                <a class="nav-item" href="renewalAssistant.html" target="contentFrame" onclick="setActive(this)">✍️ 自動續保文字</a>
+            </div>
+        </nav>
+
+        <main class="content-area">
+            <div id="loading" class="loading-overlay">載入中...</div>
+            <iframe name="contentFrame" src="pdfFiller.html" onload="hideLoading()" allow="file-system-access"></iframe>
+        </main>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function setActive(element) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('loading').style.display = 'flex';
+            // 手機版點擊後自動收起選單
+            if (window.innerWidth <= 768) {
+                toggleSidebar();
+            }
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
