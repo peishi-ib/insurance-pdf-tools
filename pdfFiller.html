@@ -391,21 +391,29 @@
     }
 
     function detectQR(pc) {
+        const display = document.getElementById('qr-display');
+        const { width, height, bgData } = pc;
+        
+        // 優先掃描區域：右上角 (明臺主資料區)
         const regions = [
-            { x: 0, y: 0, w: pc.width * 0.4, h: pc.height * 0.3 },           // 左上
-            { x: pc.width * 0.6, y: 0, w: pc.width * 0.4, h: pc.height * 0.3 },     // 右上
-            { x: pc.width * 0.2, y: pc.height * 0.3, w: pc.width * 0.6, h: pc.height * 0.4 }, // 中央
-            { x: 0, y: 0, w: pc.width, h: pc.height } // 全頁
+            { x: width * 0.5, y: 0, w: width * 0.5, h: height * 0.4, name: "右上" },
+            { x: 0, y: 0, w: width * 0.5, h: height * 0.4, name: "左上" },
+            { x: width * 0.2, y: height * 0.2, w: width * 0.6, h: height * 0.6, name: "中央" },
+            { x: 0, y: 0, w: width, h: height, name: "全頁" }
         ];
+
         let code = null;
-        for (let reg of regions) {
+        for (const reg of regions) {
             try {
-                const data = pc.ctx.getImageData(reg.x, reg.y, reg.w, reg.h);
-                code = jsQR(data.data, data.width, data.height);
-                if (code) break;
+                const scanData = pc.ctx.getImageData(reg.x, reg.y, reg.w, reg.h);
+                code = jsQR(scanData.data, reg.w, reg.h);
+                if (code && code.data) {
+                    console.log(`偵測到 QR: ${reg.name}`);
+                    break; 
+                }
             } catch(e) {}
         }
-        const display = document.getElementById('qr-display');
+        
         if (code) { 
             display.innerText = "🔗 QR 已偵測 (點擊複製)";
             display.style.color = "#34d399";

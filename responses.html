@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客戶填寫紀錄回報</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #f8fafc; display: flex; flex-direction: column; height: 100vh; }
+        .header { background: white; padding: 15px 25px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .header h2 { margin: 0; color: #1e293b; font-size: 18px; }
+        .iframe-container { flex: 1; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .hint { font-size: 12px; color: #64748b; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>📊 客戶填寫紀錄匯整</h2>
+        <div class="hint">提示：您可以直接從試算表複製整列資料，再到「PDF 填寫助手」貼上。</div>
+    </div>
+    <div class="iframe-container">
+        <!-- 💡 請將下方的 src 換成您的 Google 試算表編輯網址 -->
+        <!-- 建議在網址後加上 &rm=minimal 可以隱除試算表的工具列 -->
+        <iframe src="https://docs.google.com/spreadsheets/d/您的試算表ID/edit?usp=sharing&rm=minimal"></iframe>
+    </div>
+</body>
+</html>
