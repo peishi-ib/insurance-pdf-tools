@@ -511,6 +511,19 @@
         a.download = fileName;
         a.click();
     }
+
+    // --- 🚀 新增：接收來自門戶(index.html)的自動填入指令 ---
+    window.addEventListener('message', function(event) {
+        if (event.data.action === 'fillName') {
+            const nameInput = document.querySelector('input[placeholder="請輸入客戶姓名"]');
+            if (nameInput) {
+                nameInput.value = event.data.name;
+                // 模擬輸入事件，確保頁面有反應
+                nameInput.dispatchEvent(new Event('input'));
+                showStatus(`已從看板自動填入：${event.data.name}`);
+            }
+        }
+    });
 </script>
 </body>
 </html>
