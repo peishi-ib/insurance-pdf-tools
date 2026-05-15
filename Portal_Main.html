@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base target="_top">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #8BC220;
+      /* 公勝綠 */
+      --accent-color: #2DB7F5;
+      /* 亮藍 */
+      --bg-color: #f4f7f6;
+      /* 頁面底色 */
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-sub: #7f8c8d;
+      --warm-gray: #ececec;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, #7ab01c 100%);
+      padding: 40px 20px;
+      color: white;
+      text-align: center;
+      border-bottom-left-radius: 30px;
+      border-bottom-right-radius: 30px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      max-width: 600px;
+      margin: -20px auto 40px auto;
+      padding: 0 15px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+    }
+
+    .client-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .update-date {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    /* 重點摘要區 (Emoji Style) */
+    .highlight-item {
+      border-left: 4px solid var(--primary-color);
+      padding-left: 15px;
+      margin-bottom: 20px;
+    }
+
+    .highlight-title {
+      font-weight: bold;
+      font-size: 18px;
+      color: var(--primary-color);
+      margin-bottom: 8px;
+    }
+
+    /* 圓餅圖容器 */
+    .chart-container {
+      text-align: center;
+      position: relative;
+      margin: 30px 0;
+    }
+
+    .circle-svg {
+      width: 280px;
+      height: 280px;
+      transform: rotate(-90deg);
+    }
+
+    .center-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    /* 加總數據顯示 */
+    .finance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .finance-box {
+      background: #fdfdfd;
+      border: 1px solid #f0f0f0;
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .price-tag {
+      font-size: 20px;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+
+    /* LINE 按鈕 */
+    .line-btn {
+      display: block;
+      background-color: #00B900;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 30px;
+      box-shadow: 0 4px 15px rgba(0, 185, 0, 0.3);
+    }
+
+    @media print {
+
+      .line-btn,
+      .update-date {
+        display: none;
+      }
+
+      body {
+        background-color: white;
+      }
+
+      .container {
+        margin-top: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="update-date">🕒
+      <?= reportData.type === 'child' ? '寶寶' : '大人' ?>風險評估報告
+    </div>
+    <div class="client-title">專屬於
+      <?= reportData.babyName || reportData.clientName ?> 的保險規劃建議
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- 重點摘要區 -->
+    <div class="card">
+      <h3 style="margin-top:0;">📝 重點摘要</h3>
+      <? if (reportData.type === 'child') { ?>
+      <div class="highlight-item">
+        <div class="highlight-title">✔️ 重大傷病照顧</div>
+        <p>😈 領到重大傷病卡（含癌症）一次給付 <b>$
+            <?= reportData.summary.disease.major ?>萬
+          </b>，不用擔心長期就醫花費。<br>
+          🎗️ 癌症一次金給付 $25萬~300萬</p>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-title">✔️ 醫療保障</div>
+        <p>🚑 住院日額：病房費每日最高 <b>$
+            <?= reportData.summary.medical.wardMax ?>/日
+          </b>，補償病房費、照顧者薪資補貼。<br>
+          🚑 住院雜費：雜費上限 <b>$
+            <?= reportData.summary.medical.misc ?>萬
+          </b>，補償高額藥費、設備費。</p>
+      </div>
+      <? } else { ?>
+      <!-- 大人版重點摘要 (對應用戶提供的文案) -->
+      <div class="highlight-item">
+        <div class="highlight-title">✔️ 重病/惡性腫瘤</div>
+        <p>領到重大傷病卡(含癌症)一次給付 <b>$
+            <?= reportData.summary.disease.major ?>萬
+          </b>。<br>
+          不分治療方式，領到重大傷病證明或診斷罹患重度癌症一次給付。</p>
+      </div>
+      <? } ?>
+    </div>
+
+    <div class="card">
+      <h3 style="text-align:center;">📊 建議保障圖</h3>
+      <div class="chart-container">
+        <svg class="circle-svg" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="15.9" fill="transparent" stroke="#eee" stroke-width="3"></circle>
+          <? 
+            let offset = 0;
+            reportData.summary.distribution.forEach(function(item) { 
+              if (item.ratio > 0) {
+          ?>
+            <circle cx="18" cy="18" r="15.9" fill="transparent" 
+                    stroke="<?= item.color ?>" stroke-width="3.2"
+                    stroke-dasharray="<?= item.ratio ?> 100" 
+                    stroke-dashoffset="<?= -offset ?>"></circle>
+          <? 
+                offset += item.ratio;
+              }
+            }); 
+          ?>
+        </svg>
+        <div class="center-text">
+          <div style="font-weight:bold; color:var(--primary-color); font-size:24px;">全方位</div>
+          <div style="font-size:12px; color:var(--text-sub);">規劃保護</div>
+        </div>
+      </div>
+      <p style="text-align:center; font-size:12px; color:var(--text-sub);">※ 點擊各區塊可展開 27 項細節給付說明 (開發中)</p>
+    </div>
+
+    <!-- 費用總覽 -->
+    <div class="card">
+      <h3>💰 費用預算</h3>
+      <div class="finance-grid">
+        <div class="finance-box">
+          <div style="font-size:12px;">當年度總保費</div>
+          <div class="price-tag">$
+            <?= reportData.summary.finance.premium ?>
+          </div>
+        </div>
+        <div class="finance-box">
+          <div style="font-size:12px;">平均每月負擔</div>
+          <div class="price-tag">$
+            <?= reportData.summary.finance.monthAvg ?>
+          </div>
+        </div>
+      </div>
+      <p style="font-size:13px; color:#e67e22; margin-top:15px;">📌 自然費率，保費會隨年齡調整。</p>
+    </div>
+
+    <a href="https://line.me/ti/p/~aassii0217" class="line-btn">💬 立即與吳佩璽顧問聯繫</a>
+  </div>
+</body>
+
+</html>

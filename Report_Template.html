@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&display=swap');
+    body { font-family: 'Noto Sans TC', sans-serif; margin: 0; padding: 0; color: #2c3e50; }
+    .page { width: 210mm; height: 297mm; padding: 20mm; box-sizing: border-box; page-break-after: always; position: relative; }
+    
+    /* 🎨 主色調 */
+    :root { --primary: #2DB7F5; --secondary: #8BC220; --accent: #FF5252; --bg: #f8fafc; }
+
+    /* 🏷️ Page 1: 封面 */
+    .cover { text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; border: 15px solid var(--primary); }
+    .cover h1 { font-size: 48px; margin: 20px 0; color: var(--primary); }
+    .cover .client-info { font-size: 24px; margin-top: 100px; }
+
+    /* 📋 Page 2: 風險評估 */
+    .section-title { border-left: 8px solid var(--primary); padding-left: 15px; font-size: 24px; margin: 30px 0; color: var(--primary); }
+    .risk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .risk-item { background: var(--bg); padding: 15px; border-radius: 10px; }
+    .risk-item b { display: block; font-size: 13px; color: #7f8c8d; }
+
+    /* 🛡️ Page 3: 建議清單 */
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 13px; }
+    th { background: var(--primary); color: white; padding: 12px; text-align: left; }
+    td { border-bottom: 1px solid #eee; padding: 12px; }
+    .total-box { margin-top: 30px; text-align: right; background: #eef2f7; padding: 20px; border-radius: 10px; }
+
+    /* 📊 Page 4: 彙整圖表 */
+    .chart-container { text-align: center; margin-top: 50px; }
+    .chart-img { width: 500px; height: 350px; }
+  </style>
+</head>
+<body>
+  <!-- 📄 Page 1: 封面 -->
+  <div class="page cover">
+    <div style="font-size: 20px; color: #aaa;">ROYAL INSURANCE CONSULTING</div>
+    <h1>個人性化保險保障<br>規劃建議書</h1>
+    <div class="client-info">
+      <div>被保險人：<b>{{CLIENT_NAME}}</b> 先生/小姐</div>
+      <div style="font-size: 18px; color: #7f8c8d; margin-top: 10px;">日期：{{DATE}}</div>
+    </div>
+    <div style="position: absolute; bottom: 40px; left: 0; right: 0; color: var(--secondary); font-weight: 700;">
+      您的風險管理專家：佩璽隊長
+    </div>
+  </div>
+
+  <!-- 📄 Page 2: 風險評估表 -->
+  <div class="page">
+    <div class="section-title">Step 1. 風險缺口診斷摘要</div>
+    <div class="risk-grid">
+      <div class="risk-item"><b>每月預算</b> {{BUDGET}}</div>
+      <div class="risk-item"><b>最在意的事</b> {{CONCERN}}</div>
+      <div class="risk-item"><b>規劃動機</b> {{MOTIVATION}}</div>
+      <div class="risk-item"><b>目前病房偏好</b> {{WARD}}</div>
+      <div class="risk-item"><b>癌症治療預度</b> {{CANCER_BUDGET}}</div>
+      <div class="risk-item"><b>車禍補償準備</b> {{ACCIDENT_PREP}}</div>
+    </div>
+    <div style="margin-top: 40px; line-height: 1.6;">
+      <p>根據您的需求回饋，我們發現您在「{{CONCERN}}」方面的風險配置權重較高，目前的規劃將以此為核心架構...</p>
+    </div>
+  </div>
+
+  <!-- 📄 Page 3: 建議清單 -->
+  <div class="page">
+    <div class="section-title">Step 2. 精選保障組合明細</div>
+    <table>
+      <thead>
+        <tr><th>保險公司</th><th>險種名稱</th><th>年期</th><th>保額/計畫</th><th>預估保費</th></tr>
+      </thead>
+      <tbody>
+        {{QUOTE_TABLE_ROWS}}
+      </tbody>
+    </table>
+    <div class="total-box">
+      <div style="font-size: 14px;">首年預估總保費</div>
+      <div style="font-size: 32px; font-weight: 900; color: var(--accent);">{{TOTAL_PREMIUM}}</div>
+    </div>
+  </div>
+
+  <!-- 📄 Page 4: 彙整圖表 -->
+  <div class="page">
+    <div class="section-title">Step 3. 保障權重彙整分析</div>
+    <div class="chart-container">
+      <img src="{{CHART_URL}}" class="chart-img">
+      <p style="margin-top: 20px; font-size: 14px; color: #666;">
+        各項風險分佈說明：您的規劃目前以 <b>{{MAIN_RISK}}</b> 為最高權重載體，<br>
+        能有效涵蓋大金額的損失支出。
+      </p>
+    </div>
+  </div>
+</body>
+</html>

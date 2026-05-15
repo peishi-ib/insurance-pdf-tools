@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>佩璽 | 皇家私密戰情室 Pro</title>
+    <style>
+        :root { --primary: #2DB7F5; --secondary: #8BC220; --bg: #f8fafc; }
+        body { font-family: 'Inter', 'Noto Sans TC', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px 30px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 25px; }
+        .category-section { margin-bottom: 30px; }
+        .category-title { font-size: 18px; font-weight: bold; color: #8B4513; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .crm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 15px; }
+        .client-card { background: white; border-radius: 12px; padding: 18px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border-left: 5px solid var(--primary); transition: 0.2s; }
+        .client-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .status-txt { font-size: 12px; color: #0369a1; background: #e0f2fe; padding: 2px 8px; border-radius: 4px; }
+        .detail-item { font-size: 13px; color: #475569; margin-bottom: 6px; display: flex; gap: 8px; }
+        .detail-item span { color: #94a3b8; min-width: 75px; }
+        .btn-group { margin-top: 15px; display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .btn { padding: 6px 12px; font-size: 12px; border-radius: 6px; border: 1px solid #e2e8f0; background: white; cursor: pointer; text-decoration: none; color: #334155; display: flex; align-items: center; gap: 4px; }
+        .btn:hover { border-color: var(--primary); color: var(--primary); background: #f0f9ff; }
+        #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+    </style>
+</head>
+<body>
+    <div id="loading-overlay"><div>⏳</div><div id="loading-msg">正在同步雲端資料...</div></div>
+
+    <div class="header">
+        <div><h1 style="margin:0; font-size:22px; color:var(--primary);">🎯 佩璽 皇家私密戰情室</h1><p style="margin:5px 0 0; color:#64748b; font-size:12px;">✅ 狀態：單機穩定連線模式</p></div>
+        <button class="btn" style="background:var(--primary); color:white; border:none; padding:10px 20px; font-weight:bold; border-radius:8px;" onclick="fetchData()">🔄 刷新戰情</button>
+    </div>
+    <div id="dashboard-content"></div>
+
+    <script>
+        var allClients = [];
+
+        function fetchData() {
+            showLoading(true, "正在安全抓取試算表資料...");
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    allClients = result;
+                    renderDashboard();
+                    showLoading(false);
+                })
+                .withFailureHandler(function(err) {
+                    alert("❌ 資料讀取失敗：" + err.message);
+                    showLoading(false);
+                })
+                .getCrmDataDirectly();
+        }
+
+        function renderDashboard() {
+            var container = document.getElementById('dashboard-content');
+            container.innerHTML = '';
+            
+            var activeCases = allClients.filter(function(c) {
+                var type = c['(A) 類型'] || '';
+                return type !== '已完成' && type !== '';
+            });
+
+            if (activeCases.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:50px; color:#94a3b8;">📭 目前沒有進行中的案件。</div>';
+                return;
+            }
+
+            var groups = {};
+            activeCases.forEach(function(c) {
+                var cat = c['(A) 類型'] || '未分類';
+                if (!groups[cat]) groups[cat] = [];
+                groups[cat].push(c);
+            });
+
+            Object.keys(groups).forEach(function(cat) {
+                var section = document.createElement('div');
+                section.className = 'category-section';
+                section.innerHTML = '<div class="category-title">● ' + cat + '</div>';
+                var grid = document.createElement('div');
+                grid.className = 'crm-grid';
+
+                groups[cat].forEach(function(item) {
+                    var card = document.createElement('div');
+                    card.className = 'client-card';
+                    
+                    var html = '<div style="display:flex; justify-content:space-between; margin-bottom:12px;">' +
+                                '<b style="font-size:17px;">👤 ' + (item['(B) 姓名'] || '未知') + '</b>' +
+                                '<span class="status-txt">' + (item['(C) 進度/狀態'] || '處理中') + '</span>' +
+                                '</div>' +
+                                '<div class="detail-item"><span>📅 關鍵日期</span>' + (item['(D) 關鍵日期'] || '--') + '</div>' +
+                                '<div class="detail-item"><span>📝 任務內容</span>' + (item['(F) 任務內容'] || '無') + '</div>' +
+                                '<div class="detail-item"><span>📌 備忘記事</span>' + (item['(H) 備忘記事'] || '尚無紀錄') + '</div>' +
+                                '<div class="detail-item"><span>⏳ 保單到期</span>' + (item['(G) 保單到期日'] || '未填') + '</div>' +
+                                '<div class="btn-group">' +
+                                '<button class="btn" style="background:#dcfce7; color:#15803d; border-color:#bbf7d0;" onclick="updateStatus(\'' + item['(K) UID'] + '\', \'已完成\')">✅ 結案</button>' +
+                                '<button class="btn" onclick="copyCopywriting(\'' + cat + '\', \'' + item['(B) 姓名'] + '\')">📋 複製文案</button>' +
+                                '<button class="btn" onclick="goToFiller(\'' + item['(B) 姓名'] + '\')">📄 前往填寫</button>' +
+                                (item['(I) 雲端連結'] ? '<a href="' + item['(I) 雲端連結'] + '" target="_blank" class="btn">📂 雲端</a>' : '') +
+                                '</div>';
+                    card.innerHTML = html;
+                    grid.appendChild(card);
+                });
+                section.appendChild(grid);
+                container.appendChild(section);
+            });
+        }
+
+        function updateStatus(uid, status) {
+            if (!confirm("確定要更新狀態嗎？")) return;
+            showLoading(true);
+            google.script.run.withSuccessHandler(function() { fetchData(); }).updateCrmStatus(uid, status);
+        }
+
+        function copyCopywriting(cat, name) {
+            var txt = "";
+            if (cat === "新件投保") {
+                txt = "🩺 線上風險健診流程 ｜ 專屬您的保障守護建議 ✨\n\n您好，我是佩璽！很高興能為您提供專業的保單檢視與風險健診服務 😊\n透過以下 3 個步驟，我們一起釐清目前的保障執行狀況：\n\n---\n✅ Step 1｜填寫線上風險健診評估表\n🔗 https://peishi-ib.github.io/insurance/survey.html\n📍 僅需 5～10 分鐘\n📍 提供初步保障額度評估\n📍 讓我精準掌握您的核心需求與想法\n\n---\n✅ Step 2｜檢視現有保單資訊\n📍 省力密技：下載「保險存摺 APP」，首次支付 100 元即可申請個人全部保單明細。\n📍 手動提供：拍攝紙本保單首頁（包含主約、附約明細）\n📸 需包含：投保日期、保險名稱、年期、金額。\n⚠️ *若為國泰保單，金額標示較特殊，請多拍幾頁內頁以便確認細項喔！*\n\n---\n✅ Step 3｜製作專屬風險報告書\n完成表單與資料提供後，約需 3~5 工作天製作專屬報告。\n\n🧩 精準分析目前的風險缺口\n🧩 並提出具體規劃建議\n\n讓我們一起把保障配置到最理想的平衡點！🚀📈";
+            } else {
+                txt = "您好 " + name + "，我是佩璽！關於您的「" + cat + "」進度，目前正在處理中，若有最新消息會第一時間通知您喔！😊";
+            }
+            navigator.clipboard.writeText(txt);
+            alert("📋 文案已成功複製！");
+        }
+
+       function goToFiller(name) {
+    // 加上這行，確保它只會傳訊息，不會亂跑
+    if (window.event) window.event.preventDefault(); 
+    
+    window.top.postMessage({ action: 'setClientName', name: name }, '*');
+}
+   function showLoading(show, msg) {
+            document.getElementById('loading-overlay').style.display = show ? 'flex' : 'none';
+            if(msg) document.getElementById('loading-msg').innerText = msg;
+        }
+
+        // 啟動資料抓取
+        fetchData();
+    </script>
+</body>
+</html>

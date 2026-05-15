@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <style>
+    :root {
+      --primary: #2DB7F5;
+      --secondary: #8BC220;
+    }
+    body {
+      font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+      padding: 20px;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+    .container {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    h3 {
+      color: var(--primary);
+      margin-top: 0;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 10px;
+    }
+    p {
+      font-size: 13px;
+      color: #777;
+      line-height: 1.6;
+    }
+    textarea {
+      width: 100%;
+      height: 250px;
+      padding: 12px;
+      border: 2px solid #e0e6ed;
+      border-radius: 10px;
+      font-family: monospace;
+      font-size: 12px;
+      resize: vertical;
+      box-sizing: border-box;
+      margin-top: 10px;
+    }
+    textarea:focus {
+      border-color: var(--primary);
+      outline: none;
+    }
+    .btn-row {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+    }
+    .btn {
+      padding: 12px 30px;
+      border-radius: 50px;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-submit {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-submit:hover {
+      background-color: #23a6df;
+      transform: translateY(-2px);
+    }
+    .loading {
+      display: none;
+      color: var(--primary);
+      font-weight: bold;
+      margin-right: auto;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h3>🚀 費率數據批量匯入</h3>
+    <p>
+      請直接將 NotebookLM 或 Excel 中的數據貼製下方區域。<br>
+      <b>格式順序：</b>ProductID | 計畫別 | 性別 | 年齡 | 繳費年期 | 保障年期 | 職級 | 費率
+    </p>
+
+    <div style="margin-bottom: 15px;">
+      <label style="font-weight: bold; font-size: 14px; color: #555;">📁 匯入資料類別：</label>
+      <select id="importType" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; width: 220px;">
+        <option value="首年">☀️ 首年投保費率 (第一年)</option>
+        <option value="續保">🔄 續保費率 (第二年以後)</option>
+      </select>
+    </div>
+    
+    <textarea id="rawText" placeholder="全球_DCE	每萬	M	0	10年期	至85歲	0	403..."></textarea>
+    
+    <div class="btn-row">
+      <div id="loading" class="loading">⏳ 正在解析並同步快取，請稍候...</div>
+      <button class="btn btn-submit" id="submitBtn" onclick="submitData()">立即匯入數據</button>
+    </div>
+  </div>
+
+  <script>
+    function submitData() {
+      const rawText = document.getElementById('rawText').value;
+      const importType = document.getElementById('importType').value;
+      
+      if (!rawText.trim()) {
+        alert('請先貼入數據內容！');
+        return;
+      }
+      
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('submitBtn').style.opacity = '0.5';
+      document.getElementById('loading').style.display = 'flex';
+      
+      google.script.run
+        .withSuccessHandler(function(msg) {
+          alert(msg);
+          google.script.host.close();
+        })
+        .withFailureHandler(function(err) {
+          alert('❌ 匯入出錯：' + err);
+          document.getElementById('submitBtn').disabled = false;
+          document.getElementById('submitBtn').style.opacity = '1';
+          document.getElementById('loading').style.display = 'none';
+        })
+        .processBulkImport(rawText, importType);
+    }
+  </script>
+</body>
+</html>

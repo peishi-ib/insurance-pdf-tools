@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
-  <title>吳佩璽保險經紀人｜風險需求評估系統</title>
+  <title>吳佩璽保險經紀人｜風險評估旗艦系統</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&family=Noto+Sans+TC:wght@300;400;700&display=swap"
@@ -47,21 +47,10 @@
     }
 
     /* 💎 分流顯示控制 */
-    .flow-child-only {
-      display: block;
-    }
-
-    .flow-adult-only {
-      display: none;
-    }
-
-    body.is-adult .flow-child-only {
-      display: none;
-    }
-
-    body.is-adult .flow-adult-only {
-      display: block;
-    }
+    .flow-child-only { display: block; }
+    .flow-adult-only { display: none; }
+    body.is-adult .flow-child-only { display: none; }
+    body.is-adult .flow-adult-only { display: block; }
 
     .progress-bar-container {
       width: 100%;
@@ -88,15 +77,8 @@
     }
 
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -372,15 +354,8 @@
     }
 
     @keyframes toastIn {
-      from {
-        top: -50px;
-        opacity: 0;
-      }
-
-      to {
-        top: 30px;
-        opacity: 1;
-      }
+      from { top: -50px; opacity: 0; }
+      to { top: 30px; opacity: 1; }
     }
 
     /* 分流入口卡片 */
@@ -393,23 +368,13 @@
       cursor: pointer;
       text-align: center;
     }
-
     .entry-card:hover {
       border-color: var(--primary);
       transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(45, 183, 245, 0.15);
+      box-shadow: 0 8px 25px rgba(45,183,245,0.15);
     }
-
-    .entry-card h3 {
-      margin: 10px 0 5px;
-      color: #333;
-      font-size: 20px;
-    }
-
-    .entry-card small {
-      color: #888;
-      font-size: 13px;
-    }
+    .entry-card h3 { margin: 10px 0 5px; color: #333; font-size: 20px; }
+    .entry-card small { color: #888; font-size: 13px; }
   </style>
 </head>
 
@@ -441,11 +406,12 @@
     <!-- 🚩 分流入口 -->
     <div class="step active" id="entryStep">
       <div style="text-align: center; margin-bottom: 30px;">
-        <h1>👋您好，我是佩璽</h1>
+        <div style="font-size: 60px; margin-bottom: 10px; color: var(--primary);">🛡️</div>
+        <h1>您好，我是佩璽。</h1>
         <p class="subtitle">很高興能為您提供專業的風險需求評估。<br>請問您今天想填寫的是？</p>
       </div>
       <div class="entry-card" onclick="startFlow('child')">
-        <div style="font-size: 64px; line-height:1; margin-bottom: 5px;">&#x1F6B8;</div>
+        <div style="font-size: 80px; line-height:1; margin-bottom: 5px;">&#x1F6B8;</div>
         <h3>幫小孩規劃保單</h3>
         <small>專屬於小孩的醫療與重疾防護網</small>
       </div>
@@ -461,28 +427,29 @@
       <!-- ===== Step 0: Welcome ===== -->
       <div class="step" id="step0">
 
-        <!-- 小孩版 Step 0 -->
+        <!-- 小孩版 Step 0 (原版，完全不改) -->
         <div class="flow-child-only">
-          <h1 style="color: var(--primary); font-size: 20px; font-weight: 700; margin-bottom: 20px;">感謝您願意撥空瞭解孩子的風險需求。
-          </h1>
+          <h1>👋 您好，我是佩璽。</h1>
           <p class="subtitle">
-            每個家庭的經濟狀況、孩子成長的環境都截然不同；所以我深信，您對孩子的<b>保障需求絕對是獨一無二的</b>。😊<br><br>
-            這也是為什麼，我堅持<b>不提供「套公式、全都長一樣」的罐頭保單</b>給您。<br><br>
-            請撥幾分鐘，跟我分享您的真實想法，讓我能依照您的心意，<b>為孩子親手織出一份最溫馨、也最紮實的防護網</b>。✨
+            每個家庭的經濟狀況、孩子成長的環境都截然不同；所以我深信，您的保障需求絕對是獨一無二的。😊<br><br>
+            這也是為什麼，我堅持不提供坊間那種『套公式、全都長一樣』的罐頭保單給您。<br><br>
+            請撥幾分鐘，跟我分享您的真實想法，讓我能依照您的心意，為孩子親手織出一份最溫馨、也最紮實的防護網。✨
           </p>
         </div>
 
         <!-- 大人版 Step 0 -->
         <div class="flow-adult-only">
+          <h1>👋 您好，我是佩璽。</h1>
           <p class="subtitle">
-            每個家庭的經濟狀況環境都截然不同；所以我深信，您的保障需求絕對是<b>獨一無二的</b>。😊<br><br>
-            這也是為什麼，我堅持<b>不提供「套公式、全都長一樣」的罐頭保單</b>給您。<br><br>
-            請撥幾分鐘，讓我聽聽您的真實想法。這不僅是一份評估，更是佩璽為<b>您量身打造、溫暖且紮實的防護網</b>。✨
+            每個家庭的經濟狀況環境都截然不同；所以我深信，您的保障需求絕對是獨一無二的。😊<br><br>
+            這也是為什麼，我堅持不提供坊間那種『套公式、全都長一樣』的罐頭保單給您。<br><br>
+            請撥幾分鐘，讓我聽聽您的真實想法。這不僅是一份評估，更是佩璽為您量身打造、溫暖且紮實的防護網。✨<br><br>
+            <span style="color:var(--primary); font-weight:700;">*送出問卷後，將於 5~7 個工作天提供專業評估報告*</span>
           </p>
         </div>
 
         <div class="question-box">
-          <label style="color: var(--primary); font-weight: 700;">請告訴我，該怎麼稱呼您呢？<span>*</span></label>
+          <label>請告訴我，該怎麼稱呼您呢？<span>*</span></label>
           <input type="text" id="userInputNickname" required onchange="captureInput(this); saveCurrentState()">
         </div>
         <div class="btn-row">
@@ -498,24 +465,23 @@
 
         <!-- 小孩版標題 -->
         <div class="flow-child-only">
-          <h1 id="welcomeTitle"></h1>
-          <p class="subtitle">如果醫生告訴我們，孩子明天就要住院了，會希望有什麼樣的醫療品質呢?</p>
+          <h1 id="welcomeTitle">您好，這是專屬於您孩子的醫療風險評估</h1>
+          <p class="subtitle">第一部分：如果醫生告訴我們，孩子明天就要住院了，會希望有什麼樣的醫療品質呢?</p>
         </div>
         <!-- 大人版標題 -->
         <div class="flow-adult-only">
-          <h1 id="welcomeTitleAdult"></h1>
-          <p class="subtitle">如果醫生告訴我們，明天就要住院了，希望有什麼樣的醫療品質呢?</p>
+          <h1 id="welcomeTitleAdult">您好，這是專屬於您的風險評估</h1>
+          <p class="subtitle">第一部分：如果醫生告訴我們，明天就要住院了，希望有什麼樣的醫療品質呢?</p>
         </div>
 
         <div class="question-box">
           <label id="label_m_hospital">1. 您期盼的醫院名稱？<span>*</span></label>
-          <p class="subtitle" style="font-size: 13px; color: #888; margin-bottom: 10px;">一般會選擇離家較近的大型醫院！</p>
           <div class="info-card">
             <div class="tip-badge">💡 佈局參考：大型醫院房價較高</div>
             <img src="https://www.surveycake.com/s3/asset/pic/2020-05-12-15-15-22-a108634653e2d9ced9746d72859fe53e.png"
               class="info-image">
             <div style="display:flex; align-items:center; gap:10px;">
-              <a href="https://roo.cash/blog/expense-of-hospital-ward/?openExternalBrowser=1" target="_blank" class="link-btn">🌐
+              <a href="https://roo.cash/blog/expense-of-hospital-ward/" target="_blank" class="link-btn">🌐
                 查看全台病房升等差額表</a>
               <small style="color:#888;">(點選開啟新視窗，不影響填寫)</small>
             </div>
@@ -525,7 +491,7 @@
         </div>
 
         <div class="question-box">
-          <label id="label_m_ward">2. 請選擇您期盼的病房等級。<span>*</span></label>
+          <label id="label_m_ward">2. 期盼的病房等級？<span>*</span></label>
           <div class="option-group" id="m_ward">
             <div class="option-card" data-val="單人房" onclick="selectOption('m_ward', this, '單人房')">
               <b>🏨 單人房</b><small>避免交叉感染，休息品質最佳</small>
@@ -542,7 +508,7 @@
         <div class="question-box">
           <!-- 小孩版照顧 -->
           <div class="flow-child-only">
-            <label id="label_m_caregiver">3、請問在孩子住院期間，誰會在醫院照顧呢?<span>*</span></label>
+            <label id="label_m_caregiver">3. 住院期間，由誰在醫院照顧孩子?<span>*</span></label>
             <div class="option-group" id="m_caregiver">
               <div class="option-card" data-val="家人照顧" onclick="selectOption('m_caregiver', this, '家人照顧')">家人照顧</div>
               <div class="option-card" data-val="自己" onclick="selectOption('m_caregiver', this, '自己')">自己</div>
@@ -554,10 +520,8 @@
             <label>3. 住院期間有人可以照顧你嗎？<span>*</span></label>
             <div class="option-group" id="m_caregiver_adult">
               <div class="option-card" data-val="有" onclick="selectOption('m_caregiver', this, '有')">有</div>
-              <div class="option-card" data-val="沒有，需要請半日看護" onclick="selectOption('m_caregiver', this, '沒有，需要請半日看護')">
-                沒有，需要請半日看護</div>
-              <div class="option-card" data-val="沒有，需要請全日看護" onclick="selectOption('m_caregiver', this, '沒有，需要請全日看護')">
-                沒有，需要請全日看護</div>
+              <div class="option-card" data-val="沒有，需要請半日看護" onclick="selectOption('m_caregiver', this, '沒有，需要請半日看護')">沒有，需要請半日看護</div>
+              <div class="option-card" data-val="沒有，需要請全日看護" onclick="selectOption('m_caregiver', this, '沒有，需要請全日看護')">沒有，需要請全日看護</div>
             </div>
           </div>
         </div>
@@ -566,13 +530,15 @@
           <label>4. 每日薪資補償需求？<span>*</span></label>
           <!-- 小孩版說明 -->
           <p class="subtitle flow-child-only" style="font-size:13px; margin-bottom:10px;">
-            孩子住院期間，陪同照顧者的收入中斷，但房貸、生活費等開銷繼續支出，需要多少薪資補償呢？</p>
+            孩子住院期間照顧者收入中斷，但房貸、生活費等開銷繼續支出，需要多少薪資補償呢？(無收入可填0)</p>
           <!-- 大人版說明 -->
           <p class="subtitle flow-adult-only" style="font-size:13px; margin-bottom:10px;">
             您自己在住院期間工作收入中斷，但日常開銷還是繼續支出，需要多少補償才能維持日常生活？</p>
           <div class="info-card">
             <img src="https://www.surveycake.com/s3/asset/pic/2021-03-04-02-04-11-88fbf0c1a64d7ff05229becf72edc961.png"
-              class="info-image">
+              class="info-image flow-child-only">
+            <img src="https://www.surveycake.com/s3/asset/pic/2021-03-04-02-04-11-88fbf0c1a64d7ff05229becf72edc961.png"
+              class="info-image flow-adult-only">
           </div>
           <div class="slider-container">
             <input type="range" name="m_salary" class="slider" min="0" max="15000" step="500" value="2000"
@@ -613,24 +579,19 @@
       <!-- ===== Step 2: Major Risk ===== -->
       <div class="step" id="step2">
 
-        <!-- 小孩版 Step 2 -->
+        <!-- 小孩版 Step 2 (原版) -->
         <div class="flow-child-only">
-          <p class="subtitle" style="color: #888; margin-bottom: 5px;">恭喜你！完成第一部分醫療風險評估!</p>
-          <h1 style="color: var(--primary); font-weight: 700; font-size: 24px; margin-bottom: 10px;">第二部分：重傷病與意外失能風險評估
-          </h1>
-          <p class="subtitle" style="font-size: 13px; color: #888; margin-bottom: 25px;">
-            除了住院醫療，現在很多疾病或意外造成的傷害需要長期性的休養和治療。</p>
+          <h1>重傷與失能風險</h1>
+          <p class="subtitle">第二部分：除了住院醫療，現在很多疾病或意外造成的傷害需要長期性的休養和治療。</p>
 
           <div class="question-box">
             <label>1. 風險準備資金？<span>*</span></label>
             <p class="subtitle" style="font-size:13px; margin-bottom:10px;">萬一風險降臨 (如：罕見疾病、惡性淋巴瘤、自閉症等)，醫生建議積極治療復健金。</p>
             <div class="info-card">
-              <img
-                src="https://www.surveycake.com/s3/asset/pic/2021-03-04-04-15-22-7f3b4e4d8d992c408e323ff974ae1af2.png"
+              <img src="https://www.surveycake.com/s3/asset/pic/2021-03-04-04-15-22-7f3b4e4d8d992c408e323ff974ae1af2.png"
                 class="info-image">
               <div class="tip-badge">💡 專業風險資金評估建議</div>
-              <img
-                src="https://www.surveycake.com/s3/asset/pic/2021-03-03-16-15-33-ac49f57d8a661c9dde4e20ae5bd15d50.png"
+              <img src="https://www.surveycake.com/s3/asset/pic/2021-03-03-16-15-33-ac49f57d8a661c9dde4e20ae5bd15d50.png"
                 class="info-image">
             </div>
             <div class="slider-container">
@@ -655,8 +616,7 @@
 
           <div class="question-box">
             <label id="label_d_disability">3. 意外失能準備金？<span>*</span></label>
-            <p class="subtitle" style="font-size:13px; margin-bottom:10px;">意外高居小孩 10 大死因第
-              1，萬一因意外造成生活無法自理，是父母一輩子沉重的負擔。<br>照顧幼兒以 $2 萬/月計算，20 年約需 480 萬。</p>
+            <p class="subtitle" style="font-size:13px; margin-bottom:10px;">意外高居小孩 10 大死因第 1。相較照顧幼兒 $2 萬/月，20 年約需 480 萬。</p>
             <div class="info-card"><img
                 src="https://www.surveycake.com/s3/asset/pic/2021-03-04-04-32-30-2f4dd04f3e6999c13c0d52ee82c6baed.png"
                 class="info-image"></div>
@@ -675,8 +635,7 @@
 
           <div class="question-box">
             <label id="label_d_burn">4. 加強燒燙傷規劃?<span>*</span></label>
-            <p class="subtitle" style="font-size:13px; margin-bottom:10px;">
-              燒燙傷是兒童最常見意外事故，住院天數較一般住院長，且除疤、植皮、整形及後續的復健治療更是龐大開銷</p>
+            <p class="subtitle" style="font-size:13px; margin-bottom:10px;">除疤、植皮、整形及後續復健治療更是龐大開銷。</p>
             <div class="option-group" id="d_burn">
               <div class="option-card" data-val="非常重要" onclick="selectOption('d_burn', this, '非常重要')">非常重要</div>
               <div class="option-card" data-val="重要" onclick="selectOption('d_burn', this, '重要')">重要</div>
@@ -703,8 +662,7 @@
           <div class="question-box">
             <label>1. 萬一今天風險降臨到我們身上(如：罹癌、重度憂鬱症)，醫生建議在家休養1~2年，進行復健、積極治療才能獲得更好的照顧，這段時間會需要多少補償金呢?<span>*</span></label>
             <div class="info-card">
-              <img
-                src="https://www.surveycake.com/s3/asset/pic/2020-05-14-09-25-04-74faee383bccce70c62d446eb4e3c084.png"
+              <img src="https://www.surveycake.com/s3/asset/pic/2020-05-14-09-25-04-74faee383bccce70c62d446eb4e3c084.png"
                 class="info-image">
             </div>
             <div class="slider-container">
@@ -715,11 +673,9 @@
           </div>
 
           <div class="question-box">
-            <label>2. 針對癌症治療會想要特別加強一次金或療程費用嗎？<span>*</span> <small
-                style="color:#aaa; font-weight:400;">如有家族病史</small></label>
+            <label>2. 針對癌症治療會想要特別加強一次金或療程費用嗎？<span>*</span> <small style="color:#aaa; font-weight:400;">如有家族病史</small></label>
             <div class="info-card">
-              <img
-                src="https://www.surveycake.com/s3/asset/pic/2020-05-12-16-02-30-4a85f52d569dbe47126022326ee21bc4.png"
+              <img src="https://www.surveycake.com/s3/asset/pic/2020-05-12-16-02-30-4a85f52d569dbe47126022326ee21bc4.png"
                 class="info-image">
             </div>
             <div class="option-group" id="ad_cancer">
@@ -729,7 +685,7 @@
           </div>
 
           <div class="question-box">
-            <label id="label_ad_transport">3. 請問您較常使用的移動工具是什麼呢？ (可複選)<span>*</span></label>
+            <label>3. 請問您較常使用的移動工具是什麼呢？ (可複選)</label>
             <p class="subtitle" style="font-size:12px; margin-bottom:10px;">我們依照你的交通習慣，為你規劃合適的意外保障</p>
             <div class="option-group" id="ad_transport">
               <div class="option-card" data-val="機車" onclick="toggleMulti('ad_transport', this, '機車')">🛵 機車</div>
@@ -744,10 +700,8 @@
             <p class="subtitle" style="font-size:12px; margin-bottom:10px;">會影響投保的職業等級</p>
             <div class="option-group" id="ad_job">
               <div class="option-card" data-val="內勤" onclick="selectOption('ad_job', this, '內勤')">👨‍💻 內勤 (室內辦公)</div>
-              <div class="option-card" data-val="外勤" onclick="selectOption('ad_job', this, '外勤')">🏃‍♂️ 業務、司機 (帶有危險)
-              </div>
-              <div class="option-card" data-val="軍警消" onclick="selectOption('ad_job', this, '軍警消')">👨‍🚒 軍、警、消、外勤人員
-              </div>
+              <div class="option-card" data-val="外勤" onclick="selectOption('ad_job', this, '外勤')">🏃‍♂️ 業務、司機 (帶有危險)</div>
+              <div class="option-card" data-val="軍警消" onclick="selectOption('ad_job', this, '軍警消')">👨‍🚒 軍、警、消、外勤人員</div>
             </div>
           </div>
 
@@ -775,9 +729,7 @@
         <div class="flow-child-only">
           <h1>重視順序與預算</h1>
           <div class="question-box">
-            <label id="label_r_priorityRank">1. 以下保障如果要排優先順序，你最重視的是什麼呢？ <span>*</span></label>
-            <p class="subtitle" style="color: #ff4d4d; font-size: 13px; margin-bottom: 10px; font-weight: 600;">
-              請依重要順序點選(1-2-3)</p>
+            <label id="label_r_priorityRank">1. 以下保障如果要排優先順序，你最重視的是什麼呢？ (1-2-3) <span>*</span></label>
             <div class="option-group" id="r_priorityRank">
               <div class="option-card" data-val="醫療" onclick="selectRank('r_priorityRank', this)">
                 <span class="rank-badge"></span>🏥 醫療：在意小孩能有好的住院、手術品質
@@ -806,8 +758,7 @@
             <label id="label_r_healthCheck">3. 我想檢視自己和配偶的保障規劃 <span>*</span></label>
             <p class="subtitle" style="font-size:13px; margin-bottom:10px;">提醒即將或已成為爸媽的你，要記得隨著責任變化定期檢視自己的保單喔!</p>
             <div class="info-card">
-              <img
-                src="https://www.surveycake.com/s3/asset/pic/2020-05-14-08-55-53-e94649e487c6509d02e644ae45f02d6b.png"
+              <img src="https://www.surveycake.com/s3/asset/pic/2020-05-14-08-55-53-e94649e487c6509d02e644ae45f02d6b.png"
                 class="info-image">
             </div>
             <div class="option-group" id="r_healthCheck">
@@ -876,16 +827,14 @@
           <div class="question-box">
             <label>1. 請問您需要負擔子女教育費或父母的撫養費嗎？<span>*</span></label>
             <div class="option-group" id="ad_life_will">
-              <div class="option-card" data-val="不需要" onclick="selectOption('ad_life_will', this, '不需要')">不需要，我沒有扶養責任
-              </div>
+              <div class="option-card" data-val="不需要" onclick="selectOption('ad_life_will', this, '不需要')">不需要，我沒有扶養責任</div>
               <div class="option-card" data-val="需要" onclick="selectOption('ad_life_will', this, '需要')">需要</div>
             </div>
           </div>
 
           <div class="question-box">
             <label>2. 請問有需要您負擔生活費的人有幾個，分別是幾歲嗎？(對象/幾歲)</label>
-            <p class="subtitle" style="font-size:12px; margin-bottom:10px;">範例：2個小孩，2歲，5歲；爸爸60歲，媽媽55歲<br><span
-                style="color:#aaa;">若無扶養責任可以留空</span></p>
+            <p class="subtitle" style="font-size:12px; margin-bottom:10px;">範例：2個小孩，2歲，5歲；爸爸60歲，媽媽55歲<br><span style="color:#aaa;">若無扶養責任可以留空</span></p>
             <textarea id="ad_life_detail" placeholder="請填寫對象與年齡（可留空）"
               onchange="captureInput(this); saveCurrentState()"></textarea>
           </div>
@@ -894,8 +843,7 @@
             <label>3. 你是否有房貸、車貸或其他債務呢？<span>*</span></label>
             <p class="subtitle" style="font-size:12px; margin-bottom:10px;">我們會幫你計算若發生不幸時，保險公司應幫忙承擔多少債務</p>
             <div class="option-group" id="ad_debt_choice">
-              <div class="option-card" data-val="沒有" onclick="selectOption('ad_debt_choice', this, '沒有')">沒有 - 請跳填下一部分
-              </div>
+              <div class="option-card" data-val="沒有" onclick="selectOption('ad_debt_choice', this, '沒有')">沒有 - 請跳填下一部分</div>
               <div class="option-card" data-val="有" onclick="selectOption('ad_debt_choice', this, '有')">有</div>
             </div>
           </div>
@@ -927,8 +875,7 @@
 
           <div class="question-box">
             <label>寶寶暱稱 (新生兒可留白)</label>
-            <input type="text" id="b_childNick" onchange="captureInput(this); saveCurrentState()"
-              placeholder="作為報告標題使用">
+            <input type="text" id="b_childNick" onchange="captureInput(this); saveCurrentState()" placeholder="作為報告標題使用">
           </div>
 
           <div class="question-box">
@@ -946,8 +893,7 @@
           <p class="subtitle">恭喜你完成三大部分的保額評估，為更精準規劃適合您的保單，請回答下列問題。</p>
 
           <div class="question-box">
-            <label>1. 感謝您的作答，上面三大部分保障，如果要排優先順序，你最重視的是哪個部份呢? <span>*</span></label>
-            <p class="subtitle" style="color: #ff4d4d; font-size: 13px; margin-bottom: 10px; font-weight: 600;">請依重要順序點選(1-2-3)</p>
+            <label>1. 感謝您的作答，上面三大部分保障，如果要排優先順序，你最重視的是哪個部份呢? (1-2-3)<span>*</span></label>
             <div class="option-group" id="r_priorityRankAdult">
               <div class="option-card" data-val="重病" onclick="selectRank('r_priorityRankAdult', this)">
                 <span class="rank-badge"></span>🎗️ 重病：擔心龐大的長期休養、治療費用
@@ -962,18 +908,18 @@
           </div>
 
           <div class="question-box">
-            <label id="label_ad_existing_policy">2. 如果目前已有保險，請問您是否願意提供既有保單資料，協助您整理保障內容呢？ (可複選)<span>*</span></label>
+            <label>2. 如果目前已有保險，請問您是否願意提供既有保單資料，協助您整理保障內容呢？<span>*</span></label>
             <div class="option-group" id="ad_existing_policy">
-              <div class="option-card" data-val="我有商業保險" onclick="toggleMulti('ad_existing_policy', this, '我有商業保險')">
+              <div class="option-card" data-val="我有商業保險" onclick="selectOption('ad_existing_policy', this, '我有商業保險')">
                 我有商業保險（包含已繳費期滿的保單），可以提供投保內容
               </div>
-              <div class="option-card" data-val="我有公司團保" onclick="toggleMulti('ad_existing_policy', this, '我有公司團保')">
+              <div class="option-card" data-val="我有公司團保" onclick="selectOption('ad_existing_policy', this, '我有公司團保')">
                 我有公司團保，可以向人事室索取保障內容
               </div>
-              <div class="option-card" data-val="我有公勞軍保" onclick="toggleMulti('ad_existing_policy', this, '我有公勞軍保')">
+              <div class="option-card" data-val="我有公勞軍保" onclick="selectOption('ad_existing_policy', this, '我有公勞軍保')">
                 我有勞保、公保、軍保等，可以提供投保薪資（責任額評估會較精準）
               </div>
-              <div class="option-card" data-val="不需要" onclick="toggleMulti('ad_existing_policy', this, '不需要')">
+              <div class="option-card" data-val="不需要" onclick="selectOption('ad_existing_policy', this, '不需要')">
                 不需要提供資料，請直接幫我評估新保單
               </div>
             </div>
@@ -983,9 +929,9 @@
             <label>3. 對於自己的保險需求，請問您每個月願意支付的預算是多少呢？<span>*</span></label>
             <p class="subtitle" style="font-size:12px; color:#c62828; font-weight:600;">📢 佩璽提醒：保費不要超過月收的 10% 喔</p>
             <div class="slider-container">
-              <input type="range" name="ad_budget" class="slider" min="500" max="20000" step="500" value="5000"
+              <input type="range" name="ad_budget" class="slider" min="500" max="20000" step="500" value="3000"
                 oninput="updateSlider(this); saveCurrentState()">
-              <div class="slider-val">NT$ <span id="val_ad_budget">5000</span> / 月</div>
+              <div class="slider-val">NT$ <span id="val_ad_budget">3000</span> / 月</div>
             </div>
           </div>
 
@@ -1042,7 +988,7 @@
 
         <div class="question-box">
           <label id="label_b_lineId">4. 您的 LINE ID？<span>*</span></label>
-          <p class="subtitle" style="font-size:12px;">請記得加 "佩璽" 為好友，小編將在 3~5 個工作天內回覆！</p>
+          <p class="subtitle" style="font-size:12px;">請記得加 "佩璽" 為好友，小編將在 5~7 個工作天內回覆！</p>
           <input type="text" id="b_lineId" required onchange="captureInput(this); saveCurrentState()">
         </div>
 
@@ -1051,7 +997,8 @@
           <div class="question-box">
             <label>5. 請告訴我推薦人大名</label>
             <p class="subtitle" style="font-size:12px;">為後續聯繫使用，請安心填寫</p>
-            <input type="text" id="b_referrer" placeholder="推薦人大名" onchange="captureInput(this); saveCurrentState()">
+            <input type="text" id="b_referrer" placeholder="推薦人大名"
+              onchange="captureInput(this); saveCurrentState()">
           </div>
           <div class="question-box">
             <label>6. 感謝您的填答，如果有其他補充說明資料（如保險理賠、特殊病史、手術或住院紀錄等），請填寫在下方欄位，謝謝!</label>
@@ -1065,7 +1012,8 @@
           <div class="question-box">
             <label>5. 請告訴我推薦人大名</label>
             <p class="subtitle" style="font-size:12px;">為後續聯繫使用，請安心填寫</p>
-            <input type="text" id="b_referrer_ad" placeholder="推薦人大名" onchange="captureInput(this); saveCurrentState()">
+            <input type="text" id="b_referrer_ad" placeholder="推薦人大名"
+              onchange="captureInput(this); saveCurrentState()">
           </div>
           <div class="question-box">
             <label>6. 感謝您的填答，如果有其他補充說明資料（如保險理賠、特殊病史、手術或住院紀錄等），請填寫在下方欄位，謝謝!</label>
@@ -1083,28 +1031,10 @@
 
     <div class="step" id="successStep" style="text-align: center; padding: 40px 20px;">
       <div style="font-size: 50px; margin-bottom: 20px;">✨</div>
-      <h1 style="color: var(--secondary);">感謝您撥空填寫！</h1>
-      <p style="line-height: 1.8;">資料已成功傳送給佩璽。<br>我會在3-5個工作天提供專業評估報告，<br>親手織出一份最紮實的防護網。😊</p>
-
-      <!-- 小孩版 Success Buttons -->
-      <div class="flow-child-only">
-        <div class="btn-row" style="flex-direction: column; gap: 12px; margin-top: 30px;">
-          <button class="btn btn-next" onclick="resetUI()">📝 我要填寫大人表單</button>
-          <button class="btn btn-prev" onclick="shareForm()">🔗 我要分享</button>
-          <button class="btn btn-next" style="background:#06C755;"
-            onclick="try{window.close();window.open('','_self').close();}catch(e){}">💡 有其他疑問？回 LINE 敲佩璽</button>
-        </div>
-      </div>
-
-      <!-- 大人版 Success Buttons -->
-      <div class="flow-adult-only">
-        <div class="btn-row" style="flex-direction: column; gap: 12px; margin-top: 30px;">
-          <button class="btn btn-next" onclick="resetUI()">📝 我要再填一份</button>
-          <button class="btn btn-prev" onclick="shareForm()">🔗 我要分享</button>
-          <button class="btn btn-next" style="background:#06C755;"
-            onclick="try{window.close();window.open('','_self').close();}catch(e){}">📂 我要提供目前保單，回 LINE 敲佩璽</button>
-        </div>
-      </div>
+      <h1 style="color: var(--secondary);">感謝您的分享！</h1>
+      <p style="line-height: 1.8;">資料已成功傳送給佩璽。<br>我將在最短時間內依據您的心意，<br>親手織出一份最紮實的防護網。😊</p>
+      <button class="btn btn-next" style="margin-top: 30px;"
+        onclick="try{window.close();window.open('','_self').close();}catch(e){}">💡 有其他疑問？直接回 LINE 敲佩璽</button>
     </div>
 
     <div class="footer-copyright">
@@ -1126,15 +1056,6 @@
     };
 
     function startFlow(type) {
-      // 🧼 狀態淨化：切換流程時清空排名與暫存
-      priorityStack = []; 
-      formData = { ...formData, [type === 'adult' ? 'responsibility' : 'majorDisease']: {} };
-      document.querySelectorAll('.option-card').forEach(c => {
-        c.classList.remove('selected');
-        const b = c.querySelector('.rank-badge');
-        if (b) b.style.display = 'none';
-      });
-
       flowType = type;
       formData.flowType = type;
       document.body.className = (type === 'adult') ? 'is-adult' : 'is-child';
@@ -1168,7 +1089,7 @@
         if (el.name === 'm_salary') el.value = 2000;
         else if (el.name === 'd_major') el.value = 100;
         else if (el.name === 'r_budget') el.value = 1500;
-        else if (el.name === 'ad_budget') el.value = 5000;
+        else if (el.name === 'ad_budget') el.value = 2000;
         else if (el.name === 'ad_disability_m') el.value = 5;
         else if (el.name === 'ad_debt_val') el.value = 0;
         updateSlider(el);
@@ -1192,8 +1113,8 @@
       if (id === 'userInputNickname') formData.basicInfo.nickname = val;
       else if (id === 'm_hospital') formData.medical.m_hospital = val;
       else if (id === 'b_childNick') formData.basicInfo.childNick = val;
-      else if (id === 'b_lineId') formData.final.lineid = val;
-      else if (id === 'b_birthday') formData.final.birth = val;
+      else if (id === 'b_lineId') formData.basicInfo.lineId = val;
+      else if (id === 'b_birthday') formData.basicInfo.birthday = val;
       else if (id === 'b_referrer') formData.basicInfo.referrer = val;
       else if (id === 'b_referrer_ad') formData.basicInfo.referrer = val;
       else if (id === 'final_memo') formData.final.memo = val;
@@ -1219,7 +1140,7 @@
           }
         };
         localStorage.setItem('peishi_assessment_state', JSON.stringify(state));
-      } catch (e) { }
+      } catch(e) {}
     }
 
     function loadSavedState() {
@@ -1282,33 +1203,23 @@
     }
 
     function selectOption(id, el, val) {
-      const group = el.parentElement;
-
-      // 檢查是否已經被選中，若是則取消選中 (Check if already selected, if so deselect)
-      if (el.classList.contains('selected')) {
-        el.classList.remove('selected');
-        if (id.startsWith('m_')) delete formData.medical[id];
-        else if (id.startsWith('d_')) delete formData.majorDisease[id];
-        else if (id.startsWith('r_')) delete formData.responsibility[id];
-        else if (id.startsWith('b_')) delete formData.basicInfo[id];
-        else if (id.startsWith('ad_')) delete formData.responsibility[id];
-      } else {
-        // 全新選擇：先清空同組狀態 (New selection: clear group state first)
-        group.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
-
-        if (id.startsWith('m_')) formData.medical[id] = val;
-        else if (id.startsWith('d_')) formData.majorDisease[id] = val;
-        else if (id.startsWith('r_')) formData.responsibility[id] = val;
-        else if (id.startsWith('b_')) formData.basicInfo[id] = val;
-        else if (id.startsWith('ad_')) formData.responsibility[id] = val;
+      let group = document.getElementById(id);
+      if (!group) {
+        group = el.parentElement;
       }
+      group.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+      el.classList.add('selected');
+      if (id.startsWith('m_')) formData.medical[id] = val;
+      else if (id.startsWith('d_')) formData.majorDisease[id] = val;
+      else if (id.startsWith('r_')) formData.responsibility[id] = val;
+      else if (id.startsWith('b_')) formData.basicInfo[id] = val;
+      else if (id.startsWith('ad_')) formData.responsibility[id] = val;
       saveCurrentState();
     }
 
     function toggleMulti(id, el, val) {
       el.classList.toggle('selected');
-      const group = el.parentElement;
+      const group = document.getElementById(id);
       const selected = Array.from(group.querySelectorAll('.option-card.selected')).map(c => c.getAttribute('data-val') || c.innerText.trim());
       formData.final[id] = selected.join(', ');
       saveCurrentState();
@@ -1324,7 +1235,7 @@
         el.classList.add('selected');
         priorityStack.push(val);
       }
-      const group = el.parentElement;
+      const group = document.getElementById(id);
       group.querySelectorAll('.option-card').forEach(c => {
         const v = c.getAttribute('data-val');
         const idx = priorityStack.indexOf(v) + 1;
@@ -1352,7 +1263,6 @@
         } else {
           if (!formData.responsibility.ad_cancer) return { msg: "請選擇癌症加強需求", id: "ad_cancer" };
           if (!formData.responsibility.ad_job) return { msg: "請選擇職務危險程度", id: "ad_job" };
-          if (!formData.final.ad_transport) return { msg: "請挑選主要的交通工具", id: "ad_transport" };
         }
       } else if (s === 3) {
         if (flowType === 'child') {
@@ -1363,12 +1273,10 @@
           if (!formData.final.final_features) return { msg: "請勾選期待的商品條件", id: "final_features" };
         } else {
           if (!formData.responsibility.ad_life_will) return { msg: "請選擇扶養責任需求", id: "ad_life_will" };
-          if (!formData.responsibility.ad_debt_choice) return { msg: "請告知是否有債務責任", id: "ad_debt_choice" };
         }
       } else if (s === 4) {
         if (flowType === 'adult') {
           if (priorityStack.length < 3) return { msg: "請完成三項保障的優先排序", id: "r_priorityRankAdult" };
-          if (!formData.final.ad_existing_policy) return { msg: "請選擇既有保單提供意願", id: "ad_existing_policy" };
           if (!formData.final.ad_motivation_step4) return { msg: "請分享您的投保動機", id: "ad_motivation_step4" };
           if (!formData.final.ad_features) return { msg: "請勾選心目中的好保險條件", id: "ad_features" };
         }
@@ -1383,9 +1291,9 @@
       if (currentStep === 0) {
         const nick = document.getElementById('userInputNickname').value;
         if (flowType === 'child') {
-          document.getElementById('welcomeTitle').innerHTML = nick + " 您好！<br>第一部分：醫療風險評估";
+          document.getElementById('welcomeTitle').innerText = nick + " 您好，這是專屬於您孩子的醫療風險評估";
         } else {
-          document.getElementById('welcomeTitleAdult').innerHTML = nick + " 您好！<br>第一部分：醫療風險評估";
+          document.getElementById('welcomeTitleAdult').innerText = nick + " 您好，這是專屬您的風險評估";
         }
       }
 
@@ -1411,10 +1319,6 @@
     document.getElementById('assessmentForm').addEventListener('submit', function (e) {
       e.preventDefault();
 
-      // 🛡️ 最終防禦：執行 Step 4 的必填驗證 (解決大人版漏填排名問題)
-      const finalError = validateStep(4);
-      if (finalError) { showToast(finalError.msg, finalError.id); return; }
-
       if (flowType === 'child') {
         if (!formData.basicInfo.b_gender) { showToast("請挑選寶寶性別", "b_gender"); return; }
       } else {
@@ -1435,17 +1339,13 @@
         captureInput(document.getElementById('b_childNick'));
         captureInput(document.getElementById('b_referrer'));
         captureInput(document.getElementById('final_memo'));
-        formData.responsibility.bud_ch = document.getElementsByName('r_budget')[0].value + " 元/月";
-        // 確保小孩排名同步
-        formData.responsibility.r_priorityRank = priorityStack.join(' > ');
+        formData.responsibility.r_budget = document.getElementsByName('r_budget')[0].value + " 元/月";
       } else {
         captureInput(document.getElementById('ad_life_detail'));
         captureInput(document.getElementById('ad_final_memo_final'));
-        formData.final.bud_ad = document.getElementsByName('ad_budget')[0].value + " 元/月";
-        formData.responsibility.ad_debt = document.getElementsByName('ad_debt_val')[0].value + " 萬";
-        formData.responsibility.ad_dis_m = document.getElementsByName('ad_disability_m')[0].value + " 萬/月";
-        // 確保大人排名同步 (修正 Key 值)
-        formData.responsibility.r_priorityRank = priorityStack.join(' > ');
+        formData.final.ad_budget = document.getElementsByName('ad_budget')[0].value + " 元/月";
+        formData.responsibility.ad_debt_val = document.getElementsByName('ad_debt_val')[0].value + " 萬";
+        formData.responsibility.ad_disability_m = document.getElementsByName('ad_disability_m')[0].value + " 萬/月";
       }
 
       formData.medical.m_salary = document.getElementsByName('m_salary')[0].value + " 元/日";
@@ -1453,39 +1353,11 @@
 
       google.script.run.withSuccessHandler(function () {
         localStorage.removeItem('peishi_assessment_state');
-        document.getElementById('step' + currentStep).classList.remove('active');
+        document.getElementById('step4').classList.remove('active');
         document.getElementById('successStep').classList.add('active');
-        document.getElementById('progressBarContainer').style.display = 'none';
       }).handleWebIntakeSubmission(formData);
     });
-
-    function shareForm() {
-      const url = window.location.href;
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(url).then(() => {
-          showToast("✅ 已複製連結，快分享給親友吧！");
-        }).catch(() => {
-          fallbackCopyTextToClipboard(url);
-        });
-      } else {
-        fallbackCopyTextToClipboard(url);
-      }
-    }
-
-    function fallbackCopyTextToClipboard(text) {
-      const textArea = document.createElement("textarea");
-      textArea.value = text;
-      document.body.appendChild(textArea);
-      textArea.select();
-      try {
-        document.execCommand('copy');
-        showToast("✅ 已複製連結，快分享給親友吧！");
-      } catch (err) {
-        showToast("複製失敗，請手動複製網址");
-      }
-      document.body.removeChild(textArea);
-    }
   </script>
 </body>
 
-</html>
+</html> -->
